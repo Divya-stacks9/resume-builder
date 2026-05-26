@@ -1,5 +1,4 @@
 import mammoth from 'mammoth';
-import { PDFParse } from 'pdf-parse';
 
 // Polyfill/mock browser globals that pdf-parse's interior PDF.js dependency references
 if (typeof global !== 'undefined') {
@@ -18,6 +17,7 @@ if (typeof global !== 'undefined') {
  * Extracts raw text from a PDF file buffer.
  */
 export async function parsePdf(buffer: Buffer): Promise<string> {
+  const { PDFParse } = await import('pdf-parse');
   const parser = new PDFParse({ data: buffer });
 
   try {
