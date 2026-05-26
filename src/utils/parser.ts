@@ -1,15 +1,53 @@
 import mammoth from 'mammoth';
 
-// Polyfill/mock browser globals that pdf-parse's interior PDF.js dependency references
-if (typeof global !== 'undefined') {
-  if (!(global as any).DOMMatrix) {
-    (global as any).DOMMatrix = class DOMMatrix {};
+function ensurePdfRuntimePolyfills() {
+  const runtime = globalThis as Record<string, unknown>;
+
+  if (!runtime.DOMMatrix) {
+    runtime.DOMMatrix = class DOMMatrix {
+      a = 1;
+      b = 0;
+      c = 0;
+      d = 1;
+      e = 0;
+      f = 0;
+
+      multiplySelf() {
+        return this;
+      }
+
+      preMultiplySelf() {
+        return this;
+      }
+
+      translateSelf() {
+        return this;
+      }
+
+      scaleSelf() {
+        return this;
+      }
+
+      rotateSelf() {
+        return this;
+      }
+
+      invertSelf() {
+        return this;
+      }
+
+      transformPoint(point: unknown) {
+        return point;
+      }
+    };
   }
-  if (!(global as any).ImageData) {
-    (global as any).ImageData = class ImageData {};
+
+  if (!runtime.ImageData) {
+    runtime.ImageData = class ImageData {};
   }
-  if (!(global as any).Path2D) {
-    (global as any).Path2D = class Path2D {};
+
+  if (!runtime.Path2D) {
+    runtime.Path2D = class Path2D {};
   }
 }
 
@@ -17,6 +55,7 @@ if (typeof global !== 'undefined') {
  * Extracts raw text from a PDF file buffer.
  */
 export async function parsePdf(buffer: Buffer): Promise<string> {
+  ensurePdfRuntimePolyfills();
   const { PDFParse } = await import('pdf-parse');
   const parser = new PDFParse({ data: buffer });
 
