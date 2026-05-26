@@ -129,7 +129,17 @@ export default function ResumeAnalyzer() {
         body: formData,
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        throw new Error(
+          response.ok
+            ? 'The server returned an invalid response.'
+            : `Server returned ${response.status}. Check the deployment logs for /api/analyze.`
+        );
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Server returned an error.');

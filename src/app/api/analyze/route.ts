@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { extractText } from '@/utils/parser';
 import { analyzeResumeRuleBased } from '@/utils/analyzer';
 
+export const runtime = 'nodejs';
+export const maxDuration = 30;
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
